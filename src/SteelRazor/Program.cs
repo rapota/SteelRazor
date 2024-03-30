@@ -1,5 +1,13 @@
 using SteelRazor;
+using SteelRazor.GameSense;
+using SteelRazor.GameSense.Api;
 using SteelRazor.Synapse;
+
+Uri? gameSenseUri = await ServerDiscoveryService.TryGetUriAsync();
+if (gameSenseUri == null)
+{
+    return;
+}
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -7,7 +15,8 @@ IConfigurationSection configurationSection = builder.Configuration.GetSection(na
 
 builder.Services
     .Configure<ServiceOptions>(configurationSection)
+    .AddGameSense(gameSenseUri)
     .AddHostedService<SynapseListener>();
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();

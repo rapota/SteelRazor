@@ -1,9 +1,10 @@
 ﻿using ChromaBroadcast;
 using Microsoft.Extensions.Options;
+using SteelRazor.GameSense;
 
 namespace SteelRazor.Synapse;
 
-internal sealed class SynapseListener(IOptions<ServiceOptions> options, ILogger<SynapseListener> logger) : IHostedService
+internal sealed class SynapseListener(IGameSenseAdapter gameSenseAdapter, IOptions<ServiceOptions> options, ILogger<SynapseListener> logger) : IHostedService
 {
     private RzResult? _initResult;
 
@@ -37,7 +38,16 @@ internal sealed class SynapseListener(IOptions<ServiceOptions> options, ILogger<
 
     RzResult OnChromaBroadcastEvent(RzChromaBroadcastType type, RzChromaBroadcastStatus? status, RzChromaBroadcastEffect? effect)
     {
-        logger.LogInformation("Chroma color: {color}", effect?.ChromaLink1.ToString());
+        try
+        {
+            return gameSenseAdapter.ProcessEventAsync(type, status, effect)
+                .GetAwaiter().GetResult();
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to handle Chroma event.");
+        }
+
         return RzResult.Success;
     }
 }

@@ -14,4 +14,8 @@
     <PackageReference Include="ChromaBroadcastSDK.NET" Version="1.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SteelRazor.GameSense\SteelRazor.GameSense.csproj" />
+  </ItemGroup>
 </Project>
